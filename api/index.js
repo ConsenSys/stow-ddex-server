@@ -11,7 +11,8 @@ const initialize = () => {
   app.use(cors());
 
 
-  app.get('/offers/:seller', require('./offers'));
+  app.get('/offers/seller/:seller', require('./offersBySeller'));
+  app.get('/offers/buyer/:buyer', require('./offersByBuyer'));
   app.use(errorHandler);
 
   app.listen(port || 3000, () => {
