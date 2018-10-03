@@ -16,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
         this.setDataValue('seller', val.toLowerCase());
       }
     },
-    amount: DataTypes.INTEGER
+    amount: DataTypes.INTEGER,
+    open: DataTypes.BOOLEAN
   });
 
   return Offer;

@@ -15,7 +15,8 @@ const port = process.env.LINNIA_PORT;
       dataHash: mocks.offers[i].dataHash,
       buyer: mocks.offers[i].buyer,
       seller: mocks.offers[i].seller,
-      amount: mocks.offers[i].amount
+      amount: mocks.offers[i].amount,
+      open: mocks.offers[i].open
 
     });
     };
