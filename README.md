@@ -1,6 +1,6 @@
-# Linnia Server
+# Linnia DDEX Server
 
-This repository contains a server to query the Linnia Records and search using the Metadata.
+This repository contains a server to query the Linnia DDEX Offers and search using the seller.
 
 Currenlty under construction
 
@@ -12,7 +12,7 @@ The linnia-server requires a postgres database to connect to. You can either run
 
 1. `$>createuser linnia_user --createdb`
 1. `$>createdb linnia_ddex_db -U linnia_user`
-1. `$>createdb linnia_ddex-test_db -U linnia_user`
+1. `$>createdb linnia_ddex_test_db -U linnia_user`
 
 See:https://www.codementor.io/engineerapart/getting-started-with-postgresql-on-mac-osx-are8jcopb
 
@@ -29,7 +29,7 @@ LINNIA_IPFS_PORT=5001
 LINNIA_IPFS_PROTOCOL=https
 LINNIA_HUB_ADDRESS=0x177bf15e7e703f4980b7ef75a58dc4198f0f1172
 LINNIA_DDEX_HUB_ADDRESS=0x32116c7e55b6838ef8afcc89b5b3ce1ca9a135dd
-LINNIA_DB_TEST_NAME=linnia_offer_ddex_db
+LINNIA_DB_TEST_NAME=linnia_ddex_test_db
 LINNIA_DB_TEST_USERNAME=linnia_user
 LINNIA_PORT=3002
 
@@ -40,7 +40,7 @@ LINNIA_PORT=3002
 Running integration tests requires the use of a test database. The credentials for so much be configured in the `.env` file like so:
 
 ```
-LINNIA_DB_TEST_NAME=linnia_test_db
+LINNIA_DB_TEST_NAME=linnia_ddex_test_db
 LINNIA_DB_TEST_USERNAME=linnia_user
 LINNIA_DB_TEST_PASSWORD=securepassword
 ```
