@@ -6,7 +6,7 @@ const serializeOffer = (offerEvent, record) => {
     buyer: offerEvent.args.buyer.toLowerCase(),
     seller: record.owner.toLowerCase(),
     amount: bigNumberToNumber(offerEvent.args.amount),
-    open: false
+    open: true
   };
 };
 
