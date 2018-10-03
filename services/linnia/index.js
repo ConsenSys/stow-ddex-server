@@ -17,9 +17,7 @@ const _initialize = () => {
   // Keep connection alive
   web3._provider.on('end', (eventObj) => {
     console.log("WS disconnected. Reconnecting...")
-    websocketProvider = new Web3.providers.WebsocketProvider(config.websocketProvider);
-    web3 = new Web3(websocketProvider);
-    linnia = new Linnia(web3, config.linnia);
+    linnia = new Linnia(web3, ipfs, config.linnia);
     _initialize().then(events => Object.assign(linnia, { events })).then((l) => stayInSync(l))
   });
 
