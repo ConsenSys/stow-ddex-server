@@ -29,3 +29,21 @@ const syncNewOffer = (offerEvent, linnia) => {
   });
 };
 
+const syncNewApproval = (offerEvent, linnia) => {
+  watchEvent(offerEvent, (event) => {
+    args = event.returnValues;
+    return Offer.findOne({
+            where: {
+              dataHash: args.dataHash
+          }
+        })
+        .then(offer => {
+          // update offer in DB
+          offer.update({
+            open: false
+          });
+        });
+  });
+};
+
+
