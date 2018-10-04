@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
         this.setDataValue('seller', val.toLowerCase());
       }
     },
+    buyerPublicKey: {
+      type: DataTypes.STRING,
+      set(val) {
+        this.setDataValue('buyerPublicKey', val.toLowerCase());
+      }
+    },
     amount: DataTypes.INTEGER,
     open: DataTypes.BOOLEAN
   });

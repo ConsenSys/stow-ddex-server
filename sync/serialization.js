@@ -5,6 +5,7 @@ const serializeOffer = (offerEvent, record) => {
     dataHash: offerEvent.args.dataHash,
     buyer: offerEvent.args.buyer.toLowerCase(),
     seller: record.owner.toLowerCase(),
+    buyerPublicKey: '',
     amount: bigNumberToNumber(offerEvent.args.amount),
     open: true
   };

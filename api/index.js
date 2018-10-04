@@ -13,6 +13,7 @@ const initialize = () => {
 
   app.get('/offers/seller/:seller', require('./offersBySeller'));
   app.get('/offers/buyer/:buyer', require('./offersByBuyer'));
+  app.post('/key/:dataHash/:buyer/:publicKey', require('./postBuyerKey'))
   app.use(errorHandler);
 
   app.listen(port || 3000, () => {
