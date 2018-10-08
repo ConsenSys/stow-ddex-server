@@ -7,10 +7,12 @@ const {
 module.exports = (linnia) => {
 
   const {
-    LinniaOfferMade
+    LinniaOfferMade,
+    LinniaOfferFulfilled
   } = linnia.events;
 
   syncNewOffer(LinniaOfferMade, linnia);
+  syncNewApproval(LinniaOfferFulfilled, linnia);
 };
 
 const watchEvent = (event, callback) => {
@@ -29,8 +31,8 @@ const syncNewOffer = (offerEvent, linnia) => {
   });
 };
 
-const syncNewApproval = (offerEvent, linnia) => {
-  watchEvent(offerEvent, (event) => {
+const syncNewApproval = (approvalEvent, linnia) => {
+  watchEvent(approvalEvent, (event) => {
     args = event.returnValues;
     return Offer.findOne({
             where: {

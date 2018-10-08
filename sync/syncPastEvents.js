@@ -9,10 +9,11 @@ const {
 module.exports = (linnia, blockNumber) => {
 
   const {
-    LinniaOfferMade
+    LinniaOfferMade,
+    LinniaOfferFulfilled
   } = linnia.events;
 
-  return syncPastOffers(LinniaOfferMade, linnia, blockNumber).catch(panic);
+  return syncPastOffers(LinniaOfferMade, linnia, blockNumber).then(() => syncPastApprovals(LinniaOfferFulfilled, linnia, blockNumber)).catch(panic);
 };
 
 const getPastEvents = (event, blockNumber) => {
