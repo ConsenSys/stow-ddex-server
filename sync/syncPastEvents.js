@@ -9,13 +9,11 @@ const {
 module.exports = (linnia, blockNumber) => {
 
   const {
-    LinniaOfferMade
+    LinniaOfferMade,
+    LinniaOfferFulfilled
   } = linnia.events;
 
-  return Promise.all([
-      syncPastOffers(LinniaOfferMade, linnia, blockNumber)
-    ])
-    .catch(panic);
+  return syncPastOffers(LinniaOfferMade, linnia, blockNumber).then(() => syncPastApprovals(LinniaOfferFulfilled, linnia, blockNumber)).catch(panic);
 };
 
 const getPastEvents = (event, blockNumber) => {
@@ -47,10 +45,30 @@ const syncPastOffers = (offersEvent, linnia, blockNumber) => {
     return Promise.all(events.map((event) => {
       return linnia.getRecord(event.args.dataHash)
         .then(record => {
-          // Add record to DB
+          // Add offer to DB
           Offer.findOrCreate({
             where: serializeOffer(event, record)
           })
+        });
+    }));
+  })
+};
+
+const syncPastApprovals = (approvalEvent, linnia, blockNumber) => {
+  return getPastEvents(approvalEvent, blockNumber).then(eventsArrays => {
+    let events = [].concat.apply([], eventsArrays);
+    return Promise.all(events.map((event) => {
+          // get offer from DB
+          return Offer.findOne({
+            where: {
+              dataHash: event.args.dataHash
+          }
+        })
+        .then(offer => {
+          // update offer in DB
+          offer.update({
+            open: false
+          });
         });
     }));
   });
