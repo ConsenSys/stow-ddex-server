@@ -45,3 +45,10 @@
     "request": "^2.87.0"
   }
 }
+
+psql \
+   --host=stow.cdtoebssueww.us-east-2.rds.amazonaws.com \
+   --port=5432 \
+   --username=stow_qastg_user \
+   --password \
+   --dbname=stow_db
