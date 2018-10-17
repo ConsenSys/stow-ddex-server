@@ -6,14 +6,16 @@ const {
   serializeOffer
 } = require('./serialization');
 
-module.exports = (linnia, blockNumber, offersContract) => {
+const { getDDexContracts } = require('../services/linnia/ddexContracts');
+
+module.exports = (linnia, blockNumber) => {
 
   const {
     LinniaOfferMade
   } = linnia.events;
 
   return Promise.all([
-      syncPastOffers(LinniaOfferMade, linnia, blockNumber, offersContract)
+      syncPastOffers(LinniaOfferMade, linnia, blockNumber)
     ])
     .catch(panic);
 };
@@ -41,16 +43,18 @@ const getPastEvents = (event, blockNumber) => {
   return Promise.all(results);
 };
 
-const syncPastOffers = (offersEvent, linnia, blockNumber, offersContract) => {
+const syncPastOffers = (offersEvent, linnia, blockNumber) => {
   return getPastEvents(offersEvent, blockNumber).then(eventsArrays => {
     let events = [].concat.apply([], eventsArrays);
     return Promise.all(events.map((event) => {
       return linnia.getRecord(event.args.dataHash)
-      .then(record => {
+      .then(async record => {
         let offer = serializeOffer(event, record);
-        return offersContract.offers.call(offer.dataHash, offer.buyer).then( offerArray =>{
+        const { offers } = await getDDexContracts();
+        return offers.offers.call(offer.dataHash, offer.buyer).then( offerArray =>{
           // If the offer have not been revoked
-          if(offerArray[0]){
+          const isOffered = offerArray[0];
+          if(isOffered){
             // Add record to DB
             Offer.findOrCreate({
               where: offer
@@ -67,4 +71,4 @@ const panic = (err) => {
   console.error('Sync failed!');
   console.error(err);
   process.exit(1);
-}; 
+};
