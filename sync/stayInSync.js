@@ -7,10 +7,12 @@ const {
 module.exports = (linnia) => {
 
   const {
-    LinniaOfferMade
+    LinniaOfferMade,
+    LinniaOfferRevoked
   } = linnia.events;
 
   syncNewOffer(LinniaOfferMade, linnia);
+  syncRevokeOffer(LinniaOfferRevoked, linnia);
 };
 
 const watchEvent = (event, callback) => {
@@ -29,3 +31,14 @@ const syncNewOffer = (offerEvent, linnia) => {
   });
 };
 
+const syncRevokeOffer = (offerEvent, linnia) => {
+  watchEvent(offerEvent, (event) => {
+    args = event.returnValues;
+    // Remove offer in the DB
+    return Offer.destroy({
+      where: {
+        dataHash: args.dataHash,
+        buyer: args.buyer.toLowerCase()
+      }})
+  });
+};
