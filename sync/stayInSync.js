@@ -8,11 +8,13 @@ module.exports = (linnia) => {
 
   const {
     LinniaOfferMade,
-    LinniaOfferRevoked
+    LinniaOfferRevoked,
+    LinniaOfferFulfilled
   } = linnia.events;
 
   syncNewOffer(LinniaOfferMade, linnia);
   syncRevokeOffer(LinniaOfferRevoked, linnia);
+  syncNewApproval(LinniaOfferFulfilled, linnia);
 };
 
 const watchEvent = (event, callback) => {
@@ -42,3 +44,22 @@ const syncRevokeOffer = (offerEvent, linnia) => {
       }})
   });
 };
+
+const syncNewApproval = (approvalEvent, linnia) => {
+  watchEvent(approvalEvent, (event) => {
+    args = event.returnValues;
+    return Offer.findOne({
+            where: {
+              dataHash: args.dataHash
+          }
+        })
+        .then(offer => {
+          // update offer in DB
+          offer.update({
+            open: false
+          });
+        });
+  });
+};
+
+

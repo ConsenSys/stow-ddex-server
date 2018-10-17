@@ -15,6 +15,10 @@ const eventsToTrack = [{
 {
   name: 'LinniaOfferRevoked',
   contract: 'offers'
+},
+{
+  name: 'LinniaOfferFulfilled',
+  contract: 'offers'
 }];
 
 const _initialize = () => {

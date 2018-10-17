@@ -11,13 +11,11 @@ const { getDDexContracts } = require('../services/linnia/ddexContracts');
 module.exports = (linnia, blockNumber) => {
 
   const {
-    LinniaOfferMade
+    LinniaOfferMade,
+    LinniaOfferFulfilled
   } = linnia.events;
 
-  return Promise.all([
-      syncPastOffers(LinniaOfferMade, linnia, blockNumber)
-    ])
-    .catch(panic);
+  return syncPastOffers(LinniaOfferMade, linnia, blockNumber).then(() => syncPastApprovals(LinniaOfferFulfilled, linnia, blockNumber)).catch(panic);
 };
 
 const getPastEvents = (event, blockNumber) => {
@@ -62,6 +60,26 @@ const syncPastOffers = (offersEvent, linnia, blockNumber) => {
           }
         })
       });
+    }));
+  })
+};
+
+const syncPastApprovals = (approvalEvent, linnia, blockNumber) => {
+  return getPastEvents(approvalEvent, blockNumber).then(eventsArrays => {
+    let events = [].concat.apply([], eventsArrays);
+    return Promise.all(events.map((event) => {
+          // get offer from DB
+          return Offer.findOne({
+            where: {
+              dataHash: event.args.dataHash
+          }
+        })
+        .then(offer => {
+          // update offer in DB
+          offer.update({
+            open: false
+          });
+        });
     }));
   });
 };
