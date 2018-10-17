@@ -8,7 +8,7 @@
     "test": "jasmine-node --forceexit --verbose spec --config LINNIA_IS_TESTING true",
     "test-server": "LINNIA_IS_TESTING=true node index.js",
     "start": "nodemon index.js",
-    "docker": "docker build -t linnia-ddex-server --build-arg NPM_TOKEN=${NPM_TOKEN} ."
+    "docker": "docker build -t stow-ddex-server --build-arg NPM_TOKEN=${NPM_TOKEN} ."
   },
   "repository": {
     "type": "git",
@@ -45,10 +45,3 @@
     "request": "^2.87.0"
   }
 }
-
-psql \
-   --host=stow.cdtoebssueww.us-east-2.rds.amazonaws.com \
-   --port=5432 \
-   --username=stow_qastg_user \
-   --password \
-   --dbname=stow_db
