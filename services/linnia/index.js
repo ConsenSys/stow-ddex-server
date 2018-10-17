@@ -11,6 +11,10 @@ let linnia = new Linnia(web3, ipfs, config.linnia);
 const eventsToTrack = [{
   name: 'LinniaOfferMade',
   contract: 'offers'
+},
+{
+  name: 'LinniaOfferFulfilled',
+  contract: 'offers'
 }];
 
 const _initialize = () => {
