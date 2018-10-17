@@ -8,10 +8,12 @@ module.exports = (linnia) => {
 
   const {
     LinniaOfferMade,
+    LinniaOfferRevoked,
     LinniaOfferFulfilled
   } = linnia.events;
 
   syncNewOffer(LinniaOfferMade, linnia);
+  syncRevokeOffer(LinniaOfferRevoked, linnia);
   syncNewApproval(LinniaOfferFulfilled, linnia);
 };
 
@@ -28,6 +30,18 @@ const syncNewOffer = (offerEvent, linnia) => {
             where: serializeOffer({args}, record)
           })
       });
+  });
+};
+
+const syncRevokeOffer = (offerEvent, linnia) => {
+  watchEvent(offerEvent, (event) => {
+    args = event.returnValues;
+    // Remove offer in the DB
+    return Offer.destroy({
+      where: {
+        dataHash: args.dataHash,
+        buyer: args.buyer.toLowerCase()
+      }})
   });
 };
 

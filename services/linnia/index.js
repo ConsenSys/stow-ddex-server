@@ -13,6 +13,10 @@ const eventsToTrack = [{
   contract: 'offers'
 },
 {
+  name: 'LinniaOfferRevoked',
+  contract: 'offers'
+},
+{
   name: 'LinniaOfferFulfilled',
   contract: 'offers'
 }];

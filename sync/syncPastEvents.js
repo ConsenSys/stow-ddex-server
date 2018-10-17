@@ -6,6 +6,8 @@ const {
   serializeOffer
 } = require('./serialization');
 
+const { getDDexContracts } = require('../services/linnia/ddexContracts');
+
 module.exports = (linnia, blockNumber) => {
 
   const {
@@ -44,12 +46,20 @@ const syncPastOffers = (offersEvent, linnia, blockNumber) => {
     let events = [].concat.apply([], eventsArrays);
     return Promise.all(events.map((event) => {
       return linnia.getRecord(event.args.dataHash)
-        .then(record => {
-          // Add offer to DB
-          Offer.findOrCreate({
-            where: serializeOffer(event, record)
-          })
-        });
+      .then(async record => {
+        let offer = serializeOffer(event, record);
+        const { offers } = await getDDexContracts();
+        return offers.offers.call(offer.dataHash, offer.buyer).then( offerArray =>{
+          // If the offer have not been revoked
+          const isOffered = offerArray[0];
+          if(isOffered){
+            // Add record to DB
+            Offer.findOrCreate({
+              where: offer
+            })
+          }
+        })
+      });
     }));
   })
 };
