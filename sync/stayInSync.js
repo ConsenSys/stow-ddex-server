@@ -4,27 +4,27 @@ const {
   serializeOffer
 } = require('./serialization');
 
-module.exports = (linnia) => {
+module.exports = stow => {
 
   const {
-    LinniaOfferMade,
-    LinniaOfferRevoked,
-    LinniaOfferFulfilled
-  } = linnia.events;
+    StowOfferMade,
+    StowOfferRevoked,
+    StowOfferFulfilled
+  } = stow.events;
 
-  syncNewOffer(LinniaOfferMade, linnia);
-  syncRevokeOffer(LinniaOfferRevoked, linnia);
-  syncNewApproval(LinniaOfferFulfilled, linnia);
+  syncNewOffer(StowOfferMade, stow);
+  syncRevokeOffer(StowOfferRevoked, stow);
+  syncNewApproval(StowOfferFulfilled, stow);
 };
 
 const watchEvent = (event, callback) => {
   event.watch(callback);
 };
 
-const syncNewOffer = (offerEvent, linnia) => {
+const syncNewOffer = (offerEvent, stow) => {
   watchEvent(offerEvent, (event) => {
     args = event.returnValues;
-    linnia.getRecord(args.dataHash)
+    stow.getRecord(args.dataHash)
       .then(record => {
         return Offer.findOrCreate({
             where: serializeOffer({args}, record)
@@ -33,7 +33,7 @@ const syncNewOffer = (offerEvent, linnia) => {
   });
 };
 
-const syncRevokeOffer = (offerEvent, linnia) => {
+const syncRevokeOffer = (offerEvent, stow) => {
   watchEvent(offerEvent, (event) => {
     args = event.returnValues;
     // Remove offer in the DB
@@ -45,7 +45,7 @@ const syncRevokeOffer = (offerEvent, linnia) => {
   });
 };
 
-const syncNewApproval = (approvalEvent, linnia) => {
+const syncNewApproval = (approvalEvent, stow) => {
   watchEvent(approvalEvent, (event) => {
     args = event.returnValues;
     return Offer.findOne({

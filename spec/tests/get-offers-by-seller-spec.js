@@ -2,7 +2,7 @@ require('dotenv').config();
 const request = require('request');
 const mocks = require('./../support/mocks');
 const { cleanDatabase } = require('./../support/helpers');
-const port = process.env.LINNIA_PORT;
+const port = process.env.STOW_PORT;
 
   describe("Get Offers", () => {
   beforeEach(cleanDatabase);
