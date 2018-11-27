@@ -1,38 +1,38 @@
 {
-  "name": "@linniaprotocol/linnia-ddex-server",
+  "name": "@stowprotocol/stow-ddex-server",
   "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine-node --forceexit --verbose spec --config LINNIA_IS_TESTING true",
-    "test-server": "LINNIA_IS_TESTING=true node index.js",
+    "test": "jasmine-node --forceexit --verbose spec --config STOW_IS_TESTING true",
+    "test-server": "STOW_IS_TESTING=true node index.js",
     "start": "nodemon index.js",
     "docker": "docker build -t stow-ddex-server --build-arg NPM_TOKEN=${NPM_TOKEN} ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ConsenSys/linnia-ddex-server.git"
+    "url": "git+https://github.com/ConsenSys/stow-ddex-server.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ConsenSys/linnia-ddex-server/issues"
+    "url": "https://github.com/ConsenSys/stow-ddex-server/issues"
   },
-  "homepage": "https://github.com/ConsenSys/linnia-ddex-server#readme",
+  "homepage": "https://github.com/ConsenSys/stow-ddex-server#readme",
   "dependencies": {
+    "@stowprotocol/stow-ddex-smart-contracts": "^0.1.6",
+    "@stowprotocol/stow-js": "^0.3.6",
+    "@stowprotocol/stow-token-contracts": "^0.2.0",
     "bs58": "^4.0.1",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
+    "eth-sig-util": "^2.1.0",
     "ethereumjs-util": "^5.2.0",
     "express": "^4.16.3",
     "ipfs-api": "^22.0.1",
     "jasmine": "^3.1.0",
-    "@linniaprotocol/linnia-july-2018": "^0.1.7",
-    "@linniaprotocol/linnia-ddex-smart-contracts": "^0.1.5",
-    "@linniaprotocol/linnia-token-contracts": "^0.1.0",
     "pg": "^7.4.3",
-    "rxjs": "^6.2.1",
     "sequelize": "^4.37.10",
     "truffle-contract": "^3.0.5",
     "typedarray-to-buffer": "^3.1.5",
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "jasmine-node": "^1.3.1",
-    "nodemon": "^1.17.5",
+    "nodemon": "^1.18.7",
     "request": "^2.87.0"
   }
 }

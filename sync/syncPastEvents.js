@@ -1,21 +1,17 @@
-const {
-  Offer
-} = require('./../models');
+const { getDDexContracts } = require('../services/stow/ddexContracts');
+const { Offer } = require('./../models');
+const { serializeOffer } = require('./serialization');
 
-const {
-  serializeOffer
-} = require('./serialization');
-
-const { getDDexContracts } = require('../services/linnia/ddexContracts');
-
-module.exports = (linnia, blockNumber) => {
+module.exports = (stow, blockNumber) => {
 
   const {
-    LinniaOfferMade,
-    LinniaOfferFulfilled
-  } = linnia.events;
+    StowOfferMade,
+    StowOfferFulfilled
+  } = stow.events;
 
-  return syncPastOffers(LinniaOfferMade, linnia, blockNumber).then(() => syncPastApprovals(LinniaOfferFulfilled, linnia, blockNumber)).catch(panic);
+  return syncPastOffers(StowOfferMade, stow, blockNumber)
+    .then(() => syncPastApprovals(StowOfferFulfilled, stow, blockNumber))
+    .catch(panic);
 };
 
 const getPastEvents = (event, blockNumber) => {
@@ -41,41 +37,37 @@ const getPastEvents = (event, blockNumber) => {
   return Promise.all(results);
 };
 
-const syncPastOffers = (offersEvent, linnia, blockNumber) => {
+const syncPastOffers = (offersEvent, stow, blockNumber) => {
   return getPastEvents(offersEvent, blockNumber).then(eventsArrays => {
     let events = [].concat.apply([], eventsArrays);
     return Promise.all(events.map((event) => {
-      return linnia.getRecord(event.args.dataHash)
+      return stow.getRecord(event.args.dataHash)
       .then(async record => {
         let offer = serializeOffer(event, record);
         const { offers } = await getDDexContracts();
-        return offers.offers.call(offer.dataHash, offer.buyer).then( offerArray =>{
-          // If the offer have not been revoked
+        return offers.offers.call(offer.dataHash, offer.buyer).then(offerArray => {
           const isOffered = offerArray[0];
           if(isOffered){
-            // Add record to DB
             Offer.findOrCreate({
               where: offer
-            })
+            });
           }
-        })
+        });
       });
     }));
-  })
+  });
 };
 
-const syncPastApprovals = (approvalEvent, linnia, blockNumber) => {
+const syncPastApprovals = (approvalEvent, stow, blockNumber) => {
   return getPastEvents(approvalEvent, blockNumber).then(eventsArrays => {
     let events = [].concat.apply([], eventsArrays);
     return Promise.all(events.map((event) => {
-          // get offer from DB
           return Offer.findOne({
             where: {
               dataHash: event.args.dataHash
           }
         })
         .then(offer => {
-          // update offer in DB
           offer.update({
             open: false
           });

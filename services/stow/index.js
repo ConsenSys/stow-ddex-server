@@ -1,36 +1,34 @@
-const Linnia = require('@linniaprotocol/linnia-july-2018');
+const Stow = require('@stowprotocol/stow-js');
 const config = require('./config');
 const stayInSync = require('../../sync/stayInSync');
 const IPFS = require('ipfs-api');
 const { web3 } = require('./web3');
 const { getDDexContracts } = require('./ddexContracts');
 
-const ipfs = new IPFS(config.ipfs);
-let linnia = new Linnia(web3, ipfs, config.linnia);
-
 const eventsToTrack = [{
-  name: 'LinniaOfferMade',
+  name: 'StowOfferMade',
   contract: 'offers'
 },
 {
-  name: 'LinniaOfferRevoked',
+  name: 'StowOfferRevoked',
   contract: 'offers'
 },
 {
-  name: 'LinniaOfferFulfilled',
+  name: 'StowOfferFulfilled',
   contract: 'offers'
 }];
 
-const _initialize = () => {
-  // Keep connection alive
-  web3._provider.on('end', (eventObj) => {
-    console.log("WS disconnected. Reconnecting...")
-    linnia = new Linnia(web3, ipfs, config.linnia);
-    _initialize().then(events => Object.assign(linnia, { events })).then((l) => stayInSync(l))
-  });
+const initialize = async () => {
+  const contracts = await getDDexContracts();
+  const { hub } = contracts;
+  const hubAddress = await hub.hubContract();
+  const stow = new Stow(web3, { hubAddress });
 
-  return getDDexContracts()
-    .then(getEvents);
+  // Keep connection alive
+  web3._provider.on('end', () => initialize().then(_stow => stayInSync(_stow)));
+
+  const events = getEvents(contracts);
+  return Object.assign(stow, { events });
 };
 
 const getEvents = (contracts) => {
@@ -54,6 +52,4 @@ const fixWatch = (event, name, contract) => {
   return event;
 }
 
-module.exports = {
-  initialize: () => _initialize().then(events => Object.assign(linnia, { events }))
-};
+module.exports = { initialize };
